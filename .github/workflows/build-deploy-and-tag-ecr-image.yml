@@ -1,0 +1,15 @@
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+jobs:
+  ecr-deploy:
+    uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy.yml@0.0.9
+    with:
+      docker_image_name: 'da-tre-fn-template'
+      build_dir: '.'
+      ecr_registry_path: 'tre-v2'
+    secrets:
+      AWS_OPEN_ID_CONNECT_ROLE_ARN: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
