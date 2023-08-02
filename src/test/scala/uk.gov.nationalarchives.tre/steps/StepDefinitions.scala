@@ -1,49 +1,52 @@
 package uk.gov.nationalarchives.tre.steps
 
 import com.amazonaws.services.lambda.runtime.Context
-import com.amazonaws.services.lambda.runtime.api.client.logging.LambdaContextLogger
-import com.amazonaws.services.lambda.runtime.events.{LambdaDestinationEvent, SNSEvent, SQSEvent}
+import com.amazonaws.services.lambda.runtime.api.client.logging.{LambdaContextLogger, StdOutLogSink}
+import com.jayway.jsonpath.JsonPath
 import io.cucumber.datatable.DataTable
 import io.cucumber.scala.{EN, ScalaDsl}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.{JsString, JsValue, Json}
 import uk.gov.nationalarchives.tre.LambdaHandler
 import uk.gov.nationalarchives.tre.TestHelpers._
+
+import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 class StepDefinitions extends ScalaDsl with EN
     with MockitoSugar {
 
     val mockContext: Context = mock[Context]
-    val logHolder = new LogHolder
+    when(mockContext.getLogger).thenReturn(new LambdaContextLogger(new StdOutLogSink))
 
-    when(mockContext.getLogger).thenReturn(new LambdaContextLogger(new TestLogSink(logHolder)))
+    val testContext = new TestContext
 
-    When("an SNS event is received with message data") { (data: String) =>
-        val lambdaHandler = new LambdaHandler[SNSEvent]
-        lambdaHandler.handleRequest(snsEvent(data), mockContext)
+    When("an SNS event is received with message content") { (data: String) =>
+        testContext.setSNSData(data)
     }
 
-    Then("an SNS event is logged with message data") { (data: String) =>
-        logHolder.getLatestLog shouldBe s"SNS event received with message: ${data}"
+    Then("a message is returned containing json data:") { (data: DataTable) =>
+        val lambdaHandler = new LambdaHandler
+        val returnedMessage = lambdaHandler.handleRequest(snsEvent(testContext.getSNSData), mockContext)
+        checkAgainst(data)(returnedMessage) shouldBe true
     }
 
-    When("an SQS event is received with message data") { (data: String) =>
-        val lambdaHandler = new LambdaHandler[SQSEvent]
-        lambdaHandler.handleRequest(sqsEvent(data), mockContext)
+    def checkAgainst(expectedKeysAndValues: DataTable): String => Boolean = { jsonString =>
+        expectedKeysAndValues.cells().asScala.map(_.asScala.toSeq).flatMap { row =>
+            for {
+                path <- row.headOption
+                value <- row.lift(1)
+            } yield valueAt(path)(jsonString) == value
+        }.forall(identity)
     }
 
-    Then("an SQS event is logged with message data") { (data: String) =>
-        logHolder.getLatestLog shouldBe s"SQS event received with messages: \n$data"
-    }
+    def valueAt(path: String): String => String = jsonString => JsonPath.read[String](jsonString, path)
 
-    When("a lambda destination event is received with payload") { (data: String) =>
-        val lambdaHandler = new LambdaHandler[LambdaDestinationEvent]
-        lambdaHandler.handleRequest(lambdaDestinationEvent(Json.parse(data).as[Map[String, JsValue]]), mockContext)
-    }
+}
 
-    Then("a lambda destination event is logged with payload") { (data: String) =>
-        logHolder.getLatestLog shouldBe s"Destination event received with payload: ${Json.parse(data).as[Map[String, JsValue]]}"
-    }
+class TestContext {
+    var snsData: Option[String] = None
+    def setSNSData(data: String): Unit = snsData = Some(data)
+
+    def getSNSData: String = snsData.getOrElse(throw new RuntimeException("Expected context sns data not set"))
 }

@@ -19,32 +19,4 @@ object TestHelpers {
     snsEvent.setRecords(List(record).asJava)
     snsEvent
   }
-
-  def sqsEvent(message: String): SQSEvent = {
-    val sqsEvent = new SQSEvent
-    val sqsMessage = new SQSMessage
-    sqsMessage.setBody(message)
-    sqsEvent.setRecords(List(sqsMessage).asJava)
-    sqsEvent
-  }
-
-  def lambdaDestinationEvent(payload: Map[String, AnyRef]): LambdaDestinationEvent = {
-    LambdaDestinationEvent.builder()
-      .withRequestPayload(payload.asJava)
-      .build()
-  }
-
-  class TestLogSink(logHolder: LogHolder) extends LogSink {
-    override def log(message: Array[Byte]): Unit = logHolder.setLatestLog(message)
-
-    override def close(): Unit = {}
-  }
-
-  class LogHolder {
-    var latestLog: Option[String] = None
-
-    def getLatestLog: String = latestLog.getOrElse(throw new RuntimeException("Nothing yet logged"))
-
-    def setLatestLog(message: Array[Byte]): Unit = latestLog = Some(new String(message, StandardCharsets.UTF_8))
-  }
 }

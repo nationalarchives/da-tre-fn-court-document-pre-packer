@@ -1,36 +1,29 @@
-Feature: This lambda function will handle an SNS event and log its message
+Feature: This lambda function will handle a CourtDocumentParse message and return a CourtDocumentPackagePrepare message
 
   Scenario: An SNS event is handled by the lambda handler
-    When an SNS event is received with message data
+    When an SNS event is received with message content:
     """
-    {
-        "properties": {
-          "messageType": "uk.gov.nationalarchives.tre.messages.courtdocumentpackage.available.CourtDocumentPackageAvailable"
+      {
+        "properties" : {
+          "messageType" : "uk.gov.nationalarchives.tre.messages.courtdocument.parse.CourtDocumentParse",
+          "timestamp" : "2023-03-29T11:00:12.280Z",
+          "function" : "da-tre-tf-module-court-document-parse",
+          "producer" : "TRE",
+          "executionId" : "executionId344",
+          "parentExecutionId" : null
         },
-        "parameters": {
-           "status": "COURT_DOCUMENT_PARSE_NO_ERRORS",
-           "reference": "TRE-TEST",
-           "s3Bucket": "test-tre-court-document-pack-out",
-           "s3Key": "TRE-TEST/execution-id/TRE-TEST.tar.gz",
-           "metadataFilePath": "/metadata.json",
-           "metadataFileType": "Json"
+        "parameters" : {
+          "status": "COURT_DOCUMENT_PARSE_NO_ERRORS",
+          "originator" : "FCL",
+          "s3FolderName" : "court-documents/FCL-151/2545ffce-a313-4824-8db5-9c7e5debd1cf",
+          "s3Bucket" : "pte-ah-tre-common-data",
+          "reference" : "FCL-151"
         }
-    }
+      }
     """
 
-    Then an SNS event is logged with message data
-    """
-    {
-        "properties": {
-          "messageType": "uk.gov.nationalarchives.tre.messages.courtdocumentpackage.available.CourtDocumentPackageAvailable"
-        },
-        "parameters": {
-           "status": "COURT_DOCUMENT_PARSE_NO_ERRORS",
-           "reference": "TRE-TEST",
-           "s3Bucket": "test-tre-court-document-pack-out",
-           "s3Key": "TRE-TEST/execution-id/TRE-TEST.tar.gz",
-           "metadataFilePath": "/metadata.json",
-           "metadataFileType": "Json"
-        }
-    }
-    """
+    Then a message is returned containing json data:
+      | properties.messageType   | uk.gov.nationalarchives.tre.messages.courtdocumentpackage.prepare.CourtDocumentPackagePrepare |
+      | properties.function      | da-tre-fn-module-court-document-package-prepare                                               |
+      | parameters.status        | COURT_DOCUMENT_PARSE_NO_ERRORS                                                                |
+
