@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'feature/DTE-818-pre-pack-lambda'
   workflow_dispatch:
 jobs:
   ecr-deploy:
