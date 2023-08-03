@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.events.SNSEvent
 import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
 import MessageParsingUtils._
 import io.circe.syntax.EncoderOps
+import play.api.libs.json.Json
 import steps.S3Utils.{closeClient, getFileContent, getFileNames, saveStringToFile}
 import uk.gov.nationalarchives.common.messages.Producer.TRE
 import uk.gov.nationalarchives.common.messages.Properties
@@ -22,7 +23,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
         import courtDocumentParseMessage.parameters._
         val metadataFileName = s"TRE-$reference-metadata.json"
         val fileNames = getFileNames(s3Bucket, s3FolderName)
-        val parserMetadata = getFileContent(s3Bucket, s"$s3FolderName/metadata.json")
+        val parserMetadata = Json.stringify(Json.toJson(getFileContent(s3Bucket, s"$s3FolderName/metadata.json")))
         val metadataFileContent = buildMetadataFileContents(
           reference = reference,
           docxFileName = fileNames.find(_.endsWith(".docx")).getOrElse("null"),
@@ -60,11 +61,11 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
        |{
        |  "parameters": {
        |    "TRE": {
-       |      "reference": $reference
+       |      "reference": "$reference"
        |      "payload": {
-       |        "filename": $docxFileName,
-       |        "xml": $xmlFileName,
-       |        "metadata": $metadataFileName,
+       |        "filename": "$docxFileName",
+       |        "xml": "$xmlFileName",
+       |        "metadata": "$metadataFileName",
        |        "images": [],
        |        "log": "parser.log"
        |      }
