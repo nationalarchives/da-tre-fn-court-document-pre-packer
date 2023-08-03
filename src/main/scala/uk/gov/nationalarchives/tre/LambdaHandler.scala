@@ -41,7 +41,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
             executionId = UUID.randomUUID().toString,
             parentExecutionId = Some(courtDocumentParseMessage.properties.executionId)
           ),
-          parameters = courtDocumentParseMessage.parameters
+          parameters = courtDocumentParseMessage.parameters.copy(s3FolderName= s"$s3FolderName/")
         ).asJson.toString()
         closeClient()
         returnString
