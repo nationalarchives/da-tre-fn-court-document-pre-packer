@@ -16,6 +16,7 @@ import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 class LambdaHandler extends RequestHandler[SNSEvent, String] {
 
+  //TODO: Refactor so this is a bit nicer. Remove feature file and unit test instead. Add system testing feature file
   override def handleRequest(event: SNSEvent, context: Context): String = {
     event.getRecords.asScala.toList match {
       case snsRecord :: Nil => {
@@ -27,7 +28,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
           val parserMetadata = getFileContent(s3Bucket, s"$s3FolderName/metadata.json")
 
           def getFileNameWithSuffix(suffix: String): String =
-            fileNames.find(_.endsWith(suffix)).map(_.replace(s3FolderName, "")).getOrElse("null")
+            fileNames.find(_.endsWith(suffix)).map(_.replace(s"$s3FolderName/", "")).getOrElse("null")
           val metadataFileContent = buildMetadataFileContents(
             reference = reference,
             docxFileName = getFileNameWithSuffix(".docx"),
