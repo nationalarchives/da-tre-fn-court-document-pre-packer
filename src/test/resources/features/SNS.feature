@@ -24,6 +24,6 @@ Feature: This lambda function will handle a CourtDocumentParse message and retur
 
     Then a message is returned containing json data:
       | properties.messageType   | uk.gov.nationalarchives.tre.messages.courtdocumentpackage.prepare.CourtDocumentPackagePrepare |
-      | properties.function      | da-tre-fn-module-court-document-package-prepare                                               |
+      | properties.function      | da-tre-fn-court-document-pre-packer                                                           |
       | parameters.status        | COURT_DOCUMENT_PARSE_NO_ERRORS                                                                |
 
