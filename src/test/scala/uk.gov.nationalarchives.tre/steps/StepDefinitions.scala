@@ -21,7 +21,7 @@ class StepDefinitions extends ScalaDsl with EN
 
     val testContext = new TestContext
 
-    When("an SNS event is received with message content") { (data: String) =>
+    When("an SNS event is received with message content:") { (data: String) =>
         testContext.setSNSData(data)
     }
 
