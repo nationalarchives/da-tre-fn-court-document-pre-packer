@@ -4,8 +4,7 @@ import com.amazonaws.services.lambda.runtime.events.SNSEvent
 import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
 import MessageParsingUtils._
 import io.circe.syntax.EncoderOps
-import io.circe.Json
-import io.circe.parser.parse
+import play.api.libs.json.{JsObject, JsString, Json}
 import steps.S3Utils.{closeClient, getFileContent, getFileNames, saveStringToFile}
 import uk.gov.nationalarchives.common.messages.Producer.TRE
 import uk.gov.nationalarchives.common.messages.Properties
@@ -26,10 +25,13 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
           val metadataFileName = s"TRE-$reference-metadata.json"
           val fileNames = getFileNames(s3Bucket, s3FolderName)
           val parserMetadata = getFileContent(s3Bucket, s"$s3FolderName/metadata.json")
+
+          def getFileNameWithSuffix(suffix: String): String =
+            fileNames.find(_.endsWith(suffix)).map(_.replace(s3FolderName, "")).getOrElse("null")
           val metadataFileContent = buildMetadataFileContents(
             reference = reference,
-            docxFileName = fileNames.find(_.endsWith(".docx")).getOrElse("null"),
-            xmlFileName = fileNames.find(_.endsWith(".xml")).getOrElse("null"),
+            docxFileName = getFileNameWithSuffix(".docx"),
+            xmlFileName = getFileNameWithSuffix(".xml"),
             metadataFileName = metadataFileName,
             parserMetadata = parserMetadata
           )
@@ -63,24 +65,22 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     metadataFileName: String,
     parserMetadata: String
   ): String = {
-    val parsedJson = parse(parserMetadata).getOrElse(Json.Null)
-    val indentedMetadata = parsedJson.spaces4
-    s"""
-       |{
-       |  "parameters": {
-       |    "TRE": {
-       |      "reference": "$reference",
-       |      "payload": {
-       |        "filename": "$docxFileName",
-       |        "xml": "$xmlFileName",
-       |        "metadata": "$metadataFileName",
-       |        "images": [],
-       |        "log": "parser.log"
-       |      }
-       |    },
-       |    "PARSER": $indentedMetadata
-       |  }
-       |}
-       |""".stripMargin
+    val parserMetadataJson = Json.parse(parserMetadata).as[JsObject]
+    val json = Json.obj(
+      "parameters" -> Json.obj(
+        "TRE" -> Json.obj(
+          "reference" -> reference,
+          "payload" -> Json.obj(
+            "filename" -> JsString(docxFileName),
+            "xml" -> JsString(xmlFileName),
+            "metadata" -> JsString(metadataFileName),
+            "images" -> Json.arr(),
+            "log" -> "parser.log"
+          )
+        ),
+        "PARSER" -> parserMetadataJson
+      )
+    )
+    Json.prettyPrint(json)
   }
 }
