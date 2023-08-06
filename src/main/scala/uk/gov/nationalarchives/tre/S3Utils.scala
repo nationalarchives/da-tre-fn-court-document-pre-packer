@@ -1,4 +1,4 @@
-package steps
+package uk.gov.nationalarchives.tre
 
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.regions.Region
@@ -8,8 +8,7 @@ import software.amazon.awssdk.services.s3.model.{GetObjectRequest, ListObjectsV2
 import java.io.{BufferedReader, InputStreamReader}
 import scala.jdk.CollectionConverters._
 
-object S3Utils {
-  private lazy val s3Client: S3Client = S3Client.builder().region(Region.EU_WEST_2).build()
+class S3Utils(s3Client: S3Client) {
 
   def getFileNames(bucketName: String, directory: String): Seq[String] = {
     val listObjectsRequest = ListObjectsV2Request.builder()
@@ -20,6 +19,7 @@ object S3Utils {
     val listObjectsResponse: ListObjectsV2Response = s3Client.listObjectsV2(listObjectsRequest)
 
     listObjectsResponse.contents().asScala.map(_.key()).toSeq
+      .map(_.replace(s"$directory/", ""))
   }
 
   def getFileContent(bucketName: String, fileKey: String): String = {
@@ -41,5 +41,5 @@ object S3Utils {
       .build()
     s3Client.putObject(putObjectRequest, RequestBody.fromString(content))
   }
-  def closeClient(): Unit = s3Client.close()
+
 }
