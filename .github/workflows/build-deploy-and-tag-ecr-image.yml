@@ -7,7 +7,7 @@ jobs:
   ecr-deploy:
     uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy.yml@0.0.9
     with:
-      docker_image_name: 'da-tre-fn-template'
+      docker_image_name: 'da-tre-fn-court-document-pre-packer'
       build_dir: '.'
       ecr_registry_path: 'tre-v2'
     secrets:
