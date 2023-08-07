@@ -36,7 +36,9 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     import courtDocumentParseMessage.parameters._
     val metadataFileName = s"TRE-$reference-metadata.json"
     val fileNames = s3Utils.getFileNames(s3Bucket, s3FolderName)
-    val parserMetadata = s3Utils.getFileContent(s3Bucket, s"$s3FolderName/metadata.json")
+    val parserMetadata = if (fileNames.contains("metadata.json"))
+      Some(s3Utils.getFileContent(s3Bucket, s"$s3FolderName/metadata.json"))
+    else None
     val metadataFileContent = buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata)
     s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$s3FolderName/$metadataFileName")
   }

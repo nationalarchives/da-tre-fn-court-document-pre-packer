@@ -7,9 +7,9 @@ object MetadataConstructionUtils {
     reference: String,
     fileNames: Seq[String],
     metadataFileName: String,
-    parserMetadata: String
+    parserMetadata: Option[String]
   ): String = {
-    val parserMetadataJson = Json.parse(parserMetadata).as[JsObject]
+    val parserMetadataJson = parserMetadata.map(m => Json.parse(m).as[JsObject]).getOrElse(JsNull)
     val json = Json.obj(
       "parameters" -> Json.obj(
         "TRE" -> Json.obj(
