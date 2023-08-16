@@ -27,7 +27,8 @@ object MessageParsingUtils {
     courtDocumentParseMessage: CourtDocumentParse,
     uuid:  String = UUID.randomUUID().toString,
     timestamp: String = Instant.now().toString
-  ): String =
+  ): String = {
+    import courtDocumentParseMessage.parameters._
     CourtDocumentPackagePrepare(
       properties = Properties(
         messageType = "uk.gov.nationalarchives.tre.messages.courtdocumentpackage.prepare.CourtDocumentPackagePrepare",
@@ -37,6 +38,7 @@ object MessageParsingUtils {
         executionId = uuid,
         parentExecutionId = Some(courtDocumentParseMessage.properties.executionId)
       ),
-      parameters = courtDocumentParseMessage.parameters.copy(s3FolderName = s"${courtDocumentParseMessage.parameters.s3FolderName}/")
+      parameters = courtDocumentParseMessage.parameters.copy(s3FolderName = s"$s3FolderName/$reference/")
     ).asJson.toString
+  }
 }
