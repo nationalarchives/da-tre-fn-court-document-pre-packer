@@ -6,8 +6,8 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import uk.gov.nationalarchives.tre.MessageParsingUtils._
 import uk.gov.nationalarchives.tre.MetadataConstructionUtils._
-
 import uk.gov.nationalarchives.tre.messages.courtdocument.parse.CourtDocumentParse
+import uk.gov.nationalarchives.tre.messages.courtdocumentpackage.prepare.CourtDocumentPackagePrepare
 
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
@@ -40,6 +40,18 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
       Some(s3Utils.getFileContent(s3Bucket, s"$s3FolderName/metadata.json"))
     else None
     val metadataFileContent = buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata)
-    s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$s3FolderName/$metadataFileName")
+    s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$s3FolderName/$reference/$metadataFileName")
+    fileNames.foreach { fileName =>
+      // Move files to <reference> subfolder. Discard the metadata.json file - it is included in the new metadata file.
+      if (fileName != "metadata.json") s3Utils.copyFile(
+        fromBucket = s3Bucket,
+        toBucket = s3Bucket,
+        fromKey = s"$s3FolderName/$fileName",
+        toKey = s"$s3FolderName/$reference/$fileName"
+      )
+      // Remove files at root.
+      s3Utils.deleteFile(s3Bucket, s"$s3FolderName/$fileName")
+    }
   }
+
 }

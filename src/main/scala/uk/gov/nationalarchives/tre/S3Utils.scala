@@ -3,7 +3,7 @@ package uk.gov.nationalarchives.tre
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.{GetObjectRequest, ListObjectsV2Request, ListObjectsV2Response, PutObjectRequest}
+import software.amazon.awssdk.services.s3.model.{CopyObjectRequest, CopyObjectResponse, DeleteObjectRequest, DeleteObjectResponse, GetObjectRequest, ListObjectsV2Request, ListObjectsV2Response, PutObjectRequest}
 
 import java.io.{BufferedReader, InputStreamReader}
 import scala.jdk.CollectionConverters._
@@ -32,6 +32,24 @@ class S3Utils(s3Client: S3Client) {
     val content = Iterator.continually(bufferedReader.readLine()).takeWhile(_ != null).mkString("\n")
     bufferedReader.close()
     content
+  }
+
+  def copyFile(fromBucket: String, toBucket: String, fromKey: String, toKey: String): CopyObjectResponse = {
+    val copyObjectRequest: CopyObjectRequest = CopyObjectRequest.builder()
+      .sourceBucket(fromBucket)
+      .sourceKey(fromKey)
+      .destinationBucket(toBucket)
+      .destinationKey(toKey)
+      .build()
+    s3Client.copyObject(copyObjectRequest)
+  }
+
+  def deleteFile(bucket: String, key: String): DeleteObjectResponse = {
+    val deleteObjectRequest: DeleteObjectRequest = DeleteObjectRequest.builder()
+      .bucket(bucket)
+      .key(key)
+      .build()
+    s3Client.deleteObject(deleteObjectRequest)
   }
 
   def saveStringToFile(content: String, bucketName: String, key: String): Unit = {
