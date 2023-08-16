@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'DTE-848-pre-pack-lambda-change'
   workflow_dispatch:
 jobs:
   ecr-deploy:
