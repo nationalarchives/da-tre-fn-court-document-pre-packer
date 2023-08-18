@@ -40,7 +40,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
       Some(s3Utils.getFileContent(s3Bucket, s"$s3FolderName/metadata.json"))
     else None
     val metadataFileContent = buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata)
-    val toPackDirectory = s"${s3FolderName}out"
+    val toPackDirectory = s"$s3FolderName/out"
     s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$reference/$metadataFileName")
     val filesToPack = Seq(
       "bag-info.txt",
