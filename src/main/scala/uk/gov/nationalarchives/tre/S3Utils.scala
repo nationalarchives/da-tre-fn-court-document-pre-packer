@@ -44,14 +44,6 @@ class S3Utils(s3Client: S3Client) {
     s3Client.copyObject(copyObjectRequest)
   }
 
-  def deleteFile(bucket: String, key: String): DeleteObjectResponse = {
-    val deleteObjectRequest: DeleteObjectRequest = DeleteObjectRequest.builder()
-      .bucket(bucket)
-      .key(key)
-      .build()
-    s3Client.deleteObject(deleteObjectRequest)
-  }
-
   def saveStringToFile(content: String, bucketName: String, key: String): Unit = {
     val putObjectRequest = PutObjectRequest.builder()
       .bucket(bucketName)

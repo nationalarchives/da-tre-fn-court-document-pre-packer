@@ -40,18 +40,22 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
       Some(s3Utils.getFileContent(s3Bucket, s"$s3FolderName/metadata.json"))
     else None
     val metadataFileContent = buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata)
-    s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$s3FolderName/$reference/$metadataFileName")
-    fileNames.foreach { fileName =>
-      // Move files to <reference> subfolder. Discard the metadata.json file - it is included in the new metadata file.
-      if (fileName != "metadata.json") s3Utils.copyFile(
+    val toPackDirectory = s"$s3FolderName/out/"
+    s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$reference/$metadataFileName")
+    val filesToPack = Seq(
+      "bag-info.txt",
+      "manifest-sha256.txt",
+      s"$reference.xml",
+      "parser.log"
+    )
+    val isInputFile: String => Boolean = s => s.startsWith("data/") && s.endsWith("docx")
+    fileNames.filter(n => filesToPack.contains(n) || isInputFile(n)).foreach { fileName =>
+      s3Utils.copyFile(
         fromBucket = s3Bucket,
         toBucket = s3Bucket,
         fromKey = s"$s3FolderName/$fileName",
-        toKey = s"$s3FolderName/$reference/$fileName"
+        toKey = s"$toPackDirectory/$reference/$fileName"
       )
-      // Remove files at root.
-      s3Utils.deleteFile(s3Bucket, s"$s3FolderName/$fileName")
     }
   }
-
 }
