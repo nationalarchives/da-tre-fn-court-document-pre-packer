@@ -56,7 +56,7 @@ class MessageParsingUtilsSpec extends AnyFlatSpec with MockitoSugar {
     parseCourtDocumentParseMessage(courtDocumentParseJsonString) shouldBe courtDocumentParse
   }
 
-  "courtDocumentPackagePrepareJsonString" should "produce a json string from a valid CourtDocumentPackagePrepare case class, adding a trailing slash to the s3FolderName for compatibility with python packer lambda" in {
+  "courtDocumentPackagePrepareJsonString" should "produce a json string from a valid CourtDocumentPackagePrepare case class, specifying the out directory for packing" in {
     val testUUID = UUID.randomUUID().toString
     val testTimestamp = Instant.now().toString
     val courtDocumentPackagePrepareJsonString =
@@ -71,7 +71,7 @@ class MessageParsingUtilsSpec extends AnyFlatSpec with MockitoSugar {
          |  },
          |  "parameters" : {
          |    "originator" : "TRE",
-         |    "s3FolderName" : "TRE-TEST/execution-id/",
+         |    "s3FolderName" : "TRE-TEST/execution-id/out",
          |    "s3Bucket" : "test-tre-common-data",
          |    "reference" : "TRE-TEST",
          |    "status" : "COURT_DOCUMENT_PARSE_NO_ERRORS"
