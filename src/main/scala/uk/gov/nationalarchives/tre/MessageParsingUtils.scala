@@ -37,6 +37,6 @@ object MessageParsingUtils {
         executionId = uuid,
         parentExecutionId = Some(courtDocumentParseMessage.properties.executionId)
       ),
-      parameters = courtDocumentParseMessage.parameters.copy(s3FolderName = s"${courtDocumentParseMessage.parameters.s3FolderName}/out")
+      parameters = courtDocumentParseMessage.parameters.copy(s3FolderName = s"${courtDocumentParseMessage.parameters.s3FolderName}out")
     ).asJson.toString
 }
