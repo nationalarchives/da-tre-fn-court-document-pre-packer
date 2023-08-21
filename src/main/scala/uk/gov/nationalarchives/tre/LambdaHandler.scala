@@ -7,7 +7,6 @@ import software.amazon.awssdk.services.s3.S3Client
 import uk.gov.nationalarchives.tre.MessageParsingUtils._
 import uk.gov.nationalarchives.tre.MetadataConstructionUtils._
 import uk.gov.nationalarchives.tre.messages.courtdocument.parse.CourtDocumentParse
-import uk.gov.nationalarchives.tre.messages.courtdocumentpackage.prepare.CourtDocumentPackagePrepare
 
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
@@ -20,8 +19,8 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
         context.getLogger.log(s"Received SNS message: ${snsRecord.getSNS.getMessage}\n")
         val courtDocumentParseMessage = parseCourtDocumentParseMessage(snsRecord.getSNS.getMessage)
         context.getLogger.log(s"Successfully parsed incoming message as CourtDocumentParse\n")
-        buildTREMetadataFileAndUploadToS3(courtDocumentParseMessage, s3Utils)
-        context.getLogger.log(s"Successfully uploaded TRE metadata file to S3\n")
+        populateOutDirectory(courtDocumentParseMessage, s3Utils)
+        context.getLogger.log(s"Successfully populated out directory\n")
         val prepareMessage = courtDocumentPackagePrepareJsonString(courtDocumentParseMessage)
         context.getLogger.log(s"Returning court document prepare message: $prepareMessage\n")
         prepareMessage
@@ -29,7 +28,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     }
   }
 
-  private def buildTREMetadataFileAndUploadToS3(
+  private def populateOutDirectory(
     courtDocumentParseMessage: CourtDocumentParse,
     s3Utils: S3Utils
   ): Unit = {
