@@ -6,7 +6,6 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import uk.gov.nationalarchives.tre.MessageParsingUtils._
 import uk.gov.nationalarchives.tre.MetadataConstructionUtils._
-
 import uk.gov.nationalarchives.tre.messages.courtdocument.parse.CourtDocumentParse
 
 import scala.jdk.CollectionConverters.CollectionHasAsScala
@@ -20,8 +19,8 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
         context.getLogger.log(s"Received SNS message: ${snsRecord.getSNS.getMessage}\n")
         val courtDocumentParseMessage = parseCourtDocumentParseMessage(snsRecord.getSNS.getMessage)
         context.getLogger.log(s"Successfully parsed incoming message as CourtDocumentParse\n")
-        buildTREMetadataFileAndUploadToS3(courtDocumentParseMessage, s3Utils)
-        context.getLogger.log(s"Successfully uploaded TRE metadata file to S3\n")
+        populateOutDirectory(courtDocumentParseMessage, s3Utils)
+        context.getLogger.log(s"Successfully populated out directory\n")
         val prepareMessage = courtDocumentPackagePrepareJsonString(courtDocumentParseMessage)
         context.getLogger.log(s"Returning court document prepare message: $prepareMessage\n")
         prepareMessage
@@ -29,7 +28,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     }
   }
 
-  private def buildTREMetadataFileAndUploadToS3(
+  private def populateOutDirectory(
     courtDocumentParseMessage: CourtDocumentParse,
     s3Utils: S3Utils
   ): Unit = {
@@ -40,6 +39,22 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
       Some(s3Utils.getFileContent(s3Bucket, s"$s3FolderName/metadata.json"))
     else None
     val metadataFileContent = buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata)
-    s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$s3FolderName/$metadataFileName")
+    val toPackDirectory = s"$s3FolderName/out"
+    s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$metadataFileName")
+    val filesToPack = Seq(
+      "bag-info.txt",
+      "manifest-sha256.txt",
+      s"$reference.xml",
+      "parser.log"
+    )
+    val isInputFile: String => Boolean = s => s.startsWith("data/") && s.endsWith("docx")
+    fileNames.filter(n => filesToPack.contains(n) || isInputFile(n)).foreach { fileName =>
+      s3Utils.copyFile(
+        fromBucket = s3Bucket,
+        toBucket = s3Bucket,
+        fromKey = s"$s3FolderName/$fileName",
+        toKey = s"$toPackDirectory/$fileName"
+      )
+    }
   }
 }
