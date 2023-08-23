@@ -29,5 +29,5 @@ object MetadataConstructionUtils {
   }
 
   def getFileNameWithSuffix(suffix: String): Seq[String] => JsValue = fileNames =>
-    fileNames.find(_.endsWith(suffix)).map(JsString).getOrElse(JsNull)
+    fileNames.flatMap(_.split('/').lastOption).find(_.endsWith(suffix)).map(JsString).getOrElse(JsNull)
 }
