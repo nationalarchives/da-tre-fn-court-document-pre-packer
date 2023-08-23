@@ -72,6 +72,13 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
     expectedFileName shouldBe actualFileName
   }
 
+  it should "strip out any leading directory and return the filename only" in {
+    val expectedDocxFileName = JsString("eat_2022_1.docx")
+    val actualDocxFileName = MetadataConstructionUtils
+      .getFileNameWithSuffix(".docx")(Seq("data/eat_2022_1.docx", "FCL-151.xml", "metadata.json", "parser.log"))
+    expectedDocxFileName shouldBe actualDocxFileName
+  }
+
   it should "return null if no files with the given suffix are present" in {
     val expectedFileName = JsNull
     val actualFileName = MetadataConstructionUtils.getFileNameWithSuffix(".docx")(Seq("parser.log"))
