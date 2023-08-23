@@ -39,7 +39,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
     expectedFileContent shouldBe actualFileContent
   }
 
-  it should "contain a null parser metadata field if no parser metadata is available" in {
+  it should "contain an empty dictionary parser metadata field if no parser metadata is available" in {
     val expectedFileContent =
       """{
         |  "parameters" : {
@@ -53,7 +53,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         |        "log" : "parser.log"
         |      }
         |    },
-        |    "PARSER" : null
+        |    "PARSER" : { }
         |  }
         |}""".stripMargin
     val actualFileContent = MetadataConstructionUtils.buildMetadataFileContents(
