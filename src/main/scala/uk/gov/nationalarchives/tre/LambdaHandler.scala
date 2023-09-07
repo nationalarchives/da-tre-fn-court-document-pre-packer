@@ -29,6 +29,11 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     }
   }
 
+  /**
+   * Builds a TRE specific metadata file and places it into an "out" directory alongside other key files produced by
+   * the parser
+   * @return The directory into which files have been placed ready for packing
+   */
   private def populateOutDirectory(
     courtDocumentParseMessage: CourtDocumentParse,
     s3Utils: S3Utils
