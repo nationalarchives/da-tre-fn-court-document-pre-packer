@@ -43,7 +43,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     val fileNames = s3Utils.getFileNames(s3Bucket, s3FolderName)
 
     val fileContentFromS3: String => Option[String] = fileName => if (fileNames.contains(fileName))
-      Some(s3Utils.getFileContent(s3Bucket, s"$s3FolderName/metadata.json"))
+      Some(s3Utils.getFileContent(s3Bucket, s"$s3FolderName/$fileName"))
     else None
 
     val parserMetadata = asJson(fileContentFromS3("metadata.json"))
