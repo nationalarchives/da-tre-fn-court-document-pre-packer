@@ -59,7 +59,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
       "manifest-sha256.txt",
       s"$reference.xml",
       "parser.log"
-    ) ++ parserOutputs.value.getOrElse("images", Json.arr()).as[Seq[String]]
+    ) ++ parserOutputs.value.get("images").map(_.as[Seq[String]]).getOrElse(Seq.empty)
 
     val isInputFile: String => Boolean = s => s.startsWith("data/") && s.endsWith("docx")
     fileNames.filter(n => filesToPack.contains(n) || isInputFile(n)).foreach { fileName =>
