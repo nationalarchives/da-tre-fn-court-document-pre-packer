@@ -2,7 +2,7 @@ package uk.gov.nationalarchives.tre
 
 import com.amazonaws.services.lambda.runtime.events.SNSEvent
 import com.amazonaws.services.lambda.runtime.{Context, RequestHandler}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsArray
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import uk.gov.nationalarchives.tre.MessageParsingUtils._
@@ -54,12 +54,17 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     val toPackDirectory = s"$s3FolderName/out"
     s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$metadataFileName")
 
+    val images = parserOutputs.value.get("images") match {
+      case Some(jsArray: JsArray) => jsArray.as[Seq[String]]
+      case _ => Seq.empty[String]
+    }
+
     val filesToPack = Seq(
       "bag-info.txt",
       "manifest-sha256.txt",
       s"$reference.xml",
       "parser.log"
-    ) ++ parserOutputs.value.get("images").map(_.as[Seq[String]]).getOrElse(Seq.empty)
+    ) ++ images
 
     val isInputFile: String => Boolean = s => s.startsWith("data/") && s.endsWith("docx")
     fileNames.filter(n => filesToPack.contains(n) || isInputFile(n)).foreach { fileName =>
