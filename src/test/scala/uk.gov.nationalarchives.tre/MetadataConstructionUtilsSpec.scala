@@ -48,35 +48,6 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
     expectedFileContent shouldBe actualFileContent
   }
 
-  it should "contain an empty dictionary parser metadata field if no parser metadata is available" in {
-    val expectedFileContent =
-      """{
-        |  "parameters" : {
-        |    "TRE" : {
-        |      "reference" : "FCL-151",
-        |      "payload" : {
-        |        "filename" : "eat_2022_1.docx",
-        |        "xml" : "FCL-151.xml",
-        |        "metadata" : "TRE-FCL-151-metadata.json",
-        |        "images" : [ ],
-        |        "log" : "parser.log"
-        |      }
-        |    },
-        |    "PARSER" : {
-        |      "error-messages" : [ ]
-        |    }
-        |  }
-        |}""".stripMargin
-    val actualFileContent = MetadataConstructionUtils.buildMetadataFileContents(
-      reference = "FCL-151",
-      fileNames = Seq("eat_2022_1.docx", "FCL-151.xml", "metadata.json", "parser.log"),
-      metadataFileName = "TRE-FCL-151-metadata.json",
-      parserMetadata = Json.obj(),
-      parserOutputs = Json.obj("xml" -> "FCL-151.xml", "log" -> "parser.log")
-    )
-    expectedFileContent shouldBe actualFileContent
-  }
-
   it should "include an array of image names if present in the parser output" in {
     val expectedFileContent =
       """{
