@@ -26,7 +26,8 @@ object MessageParsingUtils {
   def courtDocumentPackagePrepareJsonString(
     courtDocumentParseMessage: CourtDocumentParse,
     uuid:  String = UUID.randomUUID().toString,
-    timestamp: String = Instant.now().toString
+    timestamp: String = Instant.now().toString,
+    outDirectory: String
   ): String =
     CourtDocumentPackagePrepare(
       properties = Properties(
@@ -37,6 +38,6 @@ object MessageParsingUtils {
         executionId = uuid,
         parentExecutionId = Some(courtDocumentParseMessage.properties.executionId)
       ),
-      parameters = courtDocumentParseMessage.parameters.copy(s3FolderName = s"${courtDocumentParseMessage.parameters.s3FolderName}/out")
+      parameters = courtDocumentParseMessage.parameters.copy(s3FolderName = outDirectory)
     ).asJson.toString
 }

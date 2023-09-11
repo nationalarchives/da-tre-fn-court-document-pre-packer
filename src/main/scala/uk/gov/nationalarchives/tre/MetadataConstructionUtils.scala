@@ -7,22 +7,25 @@ object MetadataConstructionUtils {
     reference: String,
     fileNames: Seq[String],
     metadataFileName: String,
-    parserMetadata: Option[String]
+    parserMetadata: JsObject,
+    parserOutputs: JsObject
   ): String = {
-    val parserMetadataJson = parserMetadata.map(m => Json.parse(m).as[JsObject]).getOrElse(Json.obj())
+    val xmlFileName: JsValue = parserOutputs.value.getOrElse("xml", JsNull)
+    val logFileName: JsValue = parserOutputs.value.getOrElse("log", JsNull)
+    val images: JsValue = parserOutputs.value.getOrElse("images", Json.arr())
     val json = Json.obj(
       "parameters" -> Json.obj(
         "TRE" -> Json.obj(
           "reference" -> reference,
           "payload" -> Json.obj(
             "filename" -> getFileNameWithSuffix(".docx")(fileNames),
-            "xml" -> getFileNameWithSuffix(".xml")(fileNames),
+            "xml" -> xmlFileName,
             "metadata" -> JsString(metadataFileName),
-            "images" -> Json.arr(),
-            "log" -> "parser.log"
+            "images" -> images,
+            "log" -> logFileName
           )
         ),
-        "PARSER" -> parserMetadataJson
+        "PARSER" -> parserMetadata
       )
     )
     Json.prettyPrint(json)
@@ -30,4 +33,6 @@ object MetadataConstructionUtils {
 
   def getFileNameWithSuffix(suffix: String): Seq[String] => JsValue = fileNames =>
     fileNames.flatMap(_.split('/').lastOption).find(_.endsWith(suffix)).map(JsString).getOrElse(JsNull)
+
+  def asJson(str: Option[String]): JsObject = str.map(s => Json.parse(s).as[JsObject]).getOrElse(Json.obj())
 }

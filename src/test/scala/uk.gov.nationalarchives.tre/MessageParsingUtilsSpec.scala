@@ -77,6 +77,6 @@ class MessageParsingUtilsSpec extends AnyFlatSpec with MockitoSugar {
          |    "status" : "COURT_DOCUMENT_PARSE_NO_ERRORS"
          |  }
          |}""".stripMargin
-    MessageParsingUtils.courtDocumentPackagePrepareJsonString(courtDocumentParse, testUUID,  testTimestamp) shouldBe courtDocumentPackagePrepareJsonString
+    MessageParsingUtils.courtDocumentPackagePrepareJsonString(courtDocumentParse, testUUID,  testTimestamp, outDirectory = "TRE-TEST/execution-id/out") shouldBe courtDocumentPackagePrepareJsonString
   }
 }
