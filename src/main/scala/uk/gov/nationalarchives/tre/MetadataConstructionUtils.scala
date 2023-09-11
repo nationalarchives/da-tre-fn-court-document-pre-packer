@@ -1,6 +1,6 @@
 package uk.gov.nationalarchives.tre
 
-import play.api.libs.json.{JsNull, JsObject, JsString, JsValue, Json}
+import play.api.libs.json.{JsArray, JsNull, JsObject, JsString, JsValue, Json}
 
 object MetadataConstructionUtils {
   def buildMetadataFileContents(
@@ -12,7 +12,9 @@ object MetadataConstructionUtils {
   ): String = {
     val xmlFileName: JsValue = parserOutputs.value.getOrElse("xml", JsNull)
     val logFileName: JsValue = parserOutputs.value.getOrElse("log", JsNull)
-    val images: JsValue = parserOutputs.value.getOrElse("images", Json.arr())
+    val images = arrayFromField("images")(parserOutputs)
+    val errors = arrayFromField("error-messages")(parserOutputs)
+
     val json = Json.obj(
       "parameters" -> Json.obj(
         "TRE" -> Json.obj(
@@ -25,7 +27,7 @@ object MetadataConstructionUtils {
             "log" -> logFileName
           )
         ),
-        "PARSER" -> parserMetadata
+        "PARSER" -> (parserMetadata + ("error-messages" -> errors))
       )
     )
     Json.prettyPrint(json)
@@ -35,4 +37,8 @@ object MetadataConstructionUtils {
     fileNames.flatMap(_.split('/').lastOption).find(_.endsWith(suffix)).map(JsString).getOrElse(JsNull)
 
   def asJson(str: Option[String]): JsObject = str.map(s => Json.parse(s).as[JsObject]).getOrElse(Json.obj())
+
+  def arrayFromField(fieldName: String): JsObject => JsArray =
+    _.value.get(fieldName).collect { case ja: JsArray => ja }.getOrElse(Json.arr())
+
 }
