@@ -148,7 +148,6 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
     expectedFileContent shouldBe actualFileContent
   }
 
-
   "getFileNameWithSuffix" should "return a filename with the given suffix when present" in {
     val expectedFileName = JsString("eat_2022_1.docx")
     val actualFileName = MetadataConstructionUtils
