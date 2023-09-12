@@ -162,7 +162,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         |Consignment-Type: judgment
         |Bag-Creator: TDRExportv0.0.29
         |Consignment-Start-Datetime: 2021-12-16T14:51:49Z
-        |Consignment-Series:
+        |Consignment-Series:&nbsp
         |Source-Organization: Ministry of Justice
         |Contact-Name: Jane Doe
         |Internal-Sender-Identifier: TDR-2021-CF6L
@@ -170,7 +170,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         |Consignment-Export-Datetime: 2021-12-16T14:54:55Z
         |Contact-Email: jane.doe@email.uk
         |Payload-Oxum: 45956.1
-        |Bagging-Date: 2021-12-16""".stripMargin
+        |Bagging-Date: 2021-12-16""".stripMargin.replace("&nbsp", " ")
     val expectedFileContent =
       """{
         |  "parameters" : {
