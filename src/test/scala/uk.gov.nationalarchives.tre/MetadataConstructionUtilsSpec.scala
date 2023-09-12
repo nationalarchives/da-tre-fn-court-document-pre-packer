@@ -24,7 +24,8 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
       |      "cite" : "[2022] EAT 1",
       |      "date" : "2021-09-28",
       |      "name" : "SECRETARY OF STATE FOR JUSTICE v MR ALAN JOHNSON",
-      |      "attachments" : [ ]
+      |      "attachments" : [ ],
+      |      "error-messages" : [ ]
       |    }
       |  }
       |}""".stripMargin
@@ -39,35 +40,9 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
           "cite" -> "[2022] EAT 1",
           "date" -> "2021-09-28",
           "name" -> "SECRETARY OF STATE FOR JUSTICE v MR ALAN JOHNSON",
-          "attachments" -> Json.arr()
+          "attachments" -> Json.arr(),
+          "error-messages" -> Json.arr()
         ),
-      parserOutputs = Json.obj("xml" -> "FCL-151.xml", "log" -> "parser.log")
-    )
-    expectedFileContent shouldBe actualFileContent
-  }
-
-  it should "contain an empty dictionary parser metadata field if no parser metadata is available" in {
-    val expectedFileContent =
-      """{
-        |  "parameters" : {
-        |    "TRE" : {
-        |      "reference" : "FCL-151",
-        |      "payload" : {
-        |        "filename" : "eat_2022_1.docx",
-        |        "xml" : "FCL-151.xml",
-        |        "metadata" : "TRE-FCL-151-metadata.json",
-        |        "images" : [ ],
-        |        "log" : "parser.log"
-        |      }
-        |    },
-        |    "PARSER" : { }
-        |  }
-        |}""".stripMargin
-    val actualFileContent = MetadataConstructionUtils.buildMetadataFileContents(
-      reference = "FCL-151",
-      fileNames = Seq("eat_2022_1.docx", "FCL-151.xml", "metadata.json", "parser.log"),
-      metadataFileName = "TRE-FCL-151-metadata.json",
-      parserMetadata = Json.obj(),
       parserOutputs = Json.obj("xml" -> "FCL-151.xml", "log" -> "parser.log")
     )
     expectedFileContent shouldBe actualFileContent
@@ -87,7 +62,9 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         |        "log" : "parser.log"
         |      }
         |    },
-        |    "PARSER" : { }
+        |    "PARSER" : {
+        |      "error-messages" : [ ]
+        |    }
         |  }
         |}""".stripMargin
     val actualFileContent = MetadataConstructionUtils.buildMetadataFileContents(
@@ -99,6 +76,73 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         "xml" -> "FCL-151.xml",
         "log" -> "parser.log",
         "images" -> Json.arr("image1.png", "image2.jpeg")
+      )
+    )
+    expectedFileContent shouldBe actualFileContent
+  }
+
+  it should "return an empty array for the images field if the parser output has a null value for images" in {
+    val expectedFileContent =
+      """{
+        |  "parameters" : {
+        |    "TRE" : {
+        |      "reference" : "FCL-151",
+        |      "payload" : {
+        |        "filename" : "eat_2022_1.docx",
+        |        "xml" : "FCL-151.xml",
+        |        "metadata" : "TRE-FCL-151-metadata.json",
+        |        "images" : [ ],
+        |        "log" : "parser.log"
+        |      }
+        |    },
+        |    "PARSER" : {
+        |      "error-messages" : [ ]
+        |    }
+        |  }
+        |}""".stripMargin
+    val actualFileContent = MetadataConstructionUtils.buildMetadataFileContents(
+      reference = "FCL-151",
+      fileNames = Seq("eat_2022_1.docx", "FCL-151.xml", "metadata.json", "parser.log"),
+      metadataFileName = "TRE-FCL-151-metadata.json",
+      parserMetadata = Json.obj(),
+      parserOutputs = Json.obj(
+        "xml" -> "FCL-151.xml",
+        "log" -> "parser.log",
+        "images" -> null
+      )
+    )
+    expectedFileContent shouldBe actualFileContent
+  }
+
+  it should "return error messages in the parser metadata if there are errors in the parser output" in {
+    val expectedFileContent =
+      """{
+        |  "parameters" : {
+        |    "TRE" : {
+        |      "reference" : "FCL-151",
+        |      "payload" : {
+        |        "filename" : null,
+        |        "xml" : null,
+        |        "metadata" : "TRE-FCL-151-metadata.json",
+        |        "images" : [ ],
+        |        "log" : "parser.log"
+        |      }
+        |    },
+        |    "PARSER" : {
+        |      "error-messages" : [ "error reading .docx file" ]
+        |    }
+        |  }
+        |}""".stripMargin
+    val actualFileContent = MetadataConstructionUtils.buildMetadataFileContents(
+      reference = "FCL-151",
+      fileNames = Seq("parser.log"),
+      metadataFileName = "TRE-FCL-151-metadata.json",
+      parserMetadata = Json.obj(),
+      parserOutputs = Json.obj(
+        "xml" -> null,
+        "log" -> "parser.log",
+        "images" -> null,
+        "error-messages" -> Json.arr("error reading .docx file")
       )
     )
     expectedFileContent shouldBe actualFileContent
