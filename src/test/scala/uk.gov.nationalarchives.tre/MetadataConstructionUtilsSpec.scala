@@ -43,7 +43,9 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
           "attachments" -> Json.arr(),
           "error-messages" -> Json.arr()
         ),
-      parserOutputs = Json.obj("xml" -> "FCL-151.xml", "log" -> "parser.log")
+      parserOutputs = Json.obj("xml" -> "FCL-151.xml", "log" -> "parser.log"),
+      tdrOutputs = Json.obj(),
+      checkSumContent = None
     )
     expectedFileContent shouldBe actualFileContent
   }
@@ -76,7 +78,9 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         "xml" -> "FCL-151.xml",
         "log" -> "parser.log",
         "images" -> Json.arr("image1.png", "image2.jpeg")
-      )
+      ),
+      tdrOutputs = Json.obj(),
+      checkSumContent = None
     )
     expectedFileContent shouldBe actualFileContent
   }
@@ -109,7 +113,9 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         "xml" -> "FCL-151.xml",
         "log" -> "parser.log",
         "images" -> null
-      )
+      ),
+      tdrOutputs = Json.obj(),
+      checkSumContent = None
     )
     expectedFileContent shouldBe actualFileContent
   }
@@ -143,7 +149,73 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         "log" -> "parser.log",
         "images" -> null,
         "error-messages" -> Json.arr("error reading .docx file")
-      )
+      ),
+      tdrOutputs = Json.obj(),
+      checkSumContent = None
+    )
+    expectedFileContent shouldBe actualFileContent
+  }
+
+  it should "add a TDR metadata section when TDR outputs are present" in {
+    val bagInfoContent =
+      """
+        |Consignment-Type: judgment
+        |Bag-Creator: TDRExportv0.0.29
+        |Consignment-Start-Datetime: 2021-12-16T14:51:49Z
+        |Consignment-Series:
+        |Source-Organization: Ministry of Justice
+        |Contact-Name: Jane Doe
+        |Internal-Sender-Identifier: TDR-2021-CF6L
+        |Consignment-Completed-Datetime: 2021-12-16T14:54:06Z
+        |Consignment-Export-Datetime: 2021-12-16T14:54:55Z
+        |Contact-Email: jane.doe@email.uk
+        |Payload-Oxum: 45956.1
+        |Bagging-Date: 2021-12-16""".stripMargin
+    val expectedFileContent =
+      """{
+        |  "parameters" : {
+        |    "TRE" : {
+        |      "reference" : "FCL-151",
+        |      "payload" : {
+        |        "filename" : "eat_2022_1.docx",
+        |        "xml" : "FCL-151.xml",
+        |        "metadata" : "TRE-FCL-151-metadata.json",
+        |        "images" : [ ],
+        |        "log" : "parser.log"
+        |      }
+        |    },
+        |    "PARSER" : {
+        |      "error-messages" : [ ]
+        |    },
+        |    "TDR" : {
+        |      "Consignment-Type" : "judgment",
+        |      "Bag-Creator" : "TDRExportv0.0.29",
+        |      "Consignment-Start-Datetime" : "2021-12-16T14:51:49Z",
+        |      "Consignment-Series" : null,
+        |      "Source-Organization" : "Ministry of Justice",
+        |      "Contact-Name" : "Jane Doe",
+        |      "Internal-Sender-Identifier" : "TDR-2021-CF6L",
+        |      "Consignment-Completed-Datetime" : "2021-12-16T14:54:06Z",
+        |      "Consignment-Export-Datetime" : "2021-12-16T14:54:55Z",
+        |      "Contact-Email" : "jane.doe@email.uk",
+        |      "Payload-Oxum" : "45956.1",
+        |      "Bagging-Date" : "2021-12-16",
+        |      "Document-Checksum" : "test-checksum"
+        |    }
+        |  }
+        |}""".stripMargin
+    val actualFileContent = MetadataConstructionUtils.buildMetadataFileContents(
+      reference = "FCL-151",
+      fileNames = Seq("eat_2022_1.docx", "FCL-151.xml", "metadata.json", "parser.log"),
+      metadataFileName = "TRE-FCL-151-metadata.json",
+      parserMetadata = Json.obj(),
+      parserOutputs = Json.obj(
+        "xml" -> "FCL-151.xml",
+        "log" -> "parser.log",
+        "images" -> null
+      ),
+      tdrOutputs = MetadataConstructionUtils.textFileStringToJson(Some(bagInfoContent)),
+      checkSumContent = Some("test-checksum")
     )
     expectedFileContent shouldBe actualFileContent
   }

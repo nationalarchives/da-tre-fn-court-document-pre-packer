@@ -48,8 +48,11 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
 
     val parserMetadata = asJson(fileContentFromS3("metadata.json"))
     val parserOutputs = asJson(fileContentFromS3("parser-outputs.json"))
+    val tdrOutputs = textFileStringToJson(fileContentFromS3("bag-info.txt"))
+    val checkSumFileContent = fileContentFromS3("manifest-sha256.txt").flatMap(_.split(" ").headOption)
+
     val metadataFileContent =
-      buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata, parserOutputs)
+      buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata, parserOutputs, tdrOutputs, checkSumFileContent)
 
     val toPackDirectory = s"$s3FolderName/out"
     s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$metadataFileName")
@@ -60,8 +63,6 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     }
 
     val filesToPack = Seq(
-      "bag-info.txt",
-      "manifest-sha256.txt",
       s"$reference.xml",
       "parser.log"
     ) ++ images
