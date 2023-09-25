@@ -34,7 +34,7 @@ object MetadataConstructionUtils {
         "PARSER" -> (parserMetadata + ("error-messages" -> errors))
       )
     val withTdrSection = if (tdrOutputs.keys.nonEmpty)
-      coreParameters + ("TDR" -> (tdrOutputs + ("Document-Checksum" -> checkSumContent.map(JsString).getOrElse(JsNull))))
+      coreParameters + ("TDR" -> (tdrOutputs + ("Document-Checksum-sha256" -> checkSumContent.map(JsString).getOrElse(JsNull))))
     else coreParameters
     Json.prettyPrint(Json.obj("parameters" -> withTdrSection))
   }
