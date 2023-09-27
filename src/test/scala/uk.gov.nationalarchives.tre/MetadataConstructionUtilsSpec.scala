@@ -200,7 +200,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         |      "Contact-Email" : "jane.doe@email.uk",
         |      "Payload-Oxum" : "45956.1",
         |      "Bagging-Date" : "2021-12-16",
-        |      "Document-Checksum" : "test-checksum"
+        |      "Document-Checksum-sha256" : "test-checksum"
         |    }
         |  }
         |}""".stripMargin
