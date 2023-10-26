@@ -22,7 +22,7 @@ object MetadataConstructionUtils {
 
     val coreParameters = Json.obj(
         "TRE" -> Json.obj(
-          "reference" -> reference,
+          "reference" -> s"TRE-$reference",
           "payload" -> Json.obj(
             "filename" -> getFileNameWithSuffix(".docx")(fileNames),
             "xml" -> xmlFileName,
