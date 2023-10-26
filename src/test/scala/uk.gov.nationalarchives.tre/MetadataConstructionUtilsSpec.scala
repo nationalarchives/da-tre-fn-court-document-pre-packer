@@ -9,7 +9,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
     val expectedFileContent = """{
       |  "parameters" : {
       |    "TRE" : {
-      |      "reference" : "FCL-151",
+      |      "reference" : "TRE-FCL-151",
       |      "payload" : {
       |        "filename" : "eat_2022_1.docx",
       |        "xml" : "FCL-151.xml",
@@ -55,7 +55,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
       """{
         |  "parameters" : {
         |    "TRE" : {
-        |      "reference" : "FCL-151",
+        |      "reference" : "TRE-FCL-151",
         |      "payload" : {
         |        "filename" : "eat_2022_1.docx",
         |        "xml" : "FCL-151.xml",
@@ -90,7 +90,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
       """{
         |  "parameters" : {
         |    "TRE" : {
-        |      "reference" : "FCL-151",
+        |      "reference" : "TRE-FCL-151",
         |      "payload" : {
         |        "filename" : "eat_2022_1.docx",
         |        "xml" : "FCL-151.xml",
@@ -125,7 +125,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
       """{
         |  "parameters" : {
         |    "TRE" : {
-        |      "reference" : "FCL-151",
+        |      "reference" : "TRE-FCL-151",
         |      "payload" : {
         |        "filename" : null,
         |        "xml" : null,
@@ -175,7 +175,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
       """{
         |  "parameters" : {
         |    "TRE" : {
-        |      "reference" : "FCL-151",
+        |      "reference" : "TRE-FCL-151",
         |      "payload" : {
         |        "filename" : "eat_2022_1.docx",
         |        "xml" : "FCL-151.xml",
