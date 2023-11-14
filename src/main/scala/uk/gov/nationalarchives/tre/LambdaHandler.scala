@@ -50,9 +50,11 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     val parserOutputs = asJson(fileContentFromS3("parser-outputs.json"))
     val tdrOutputs = textFileStringToJson(fileContentFromS3("bag-info.txt"))
     val checkSumFileContent = fileContentFromS3("manifest-sha256.txt").flatMap(_.split(" ").headOption)
-
+    val inputFileName = fileNames.find(n => n.startsWith("data/") && n.endsWith("docx"))
+    val fileMetadata = csvStringToFileMetadata(fileContentFromS3("file-metadata.csv"))
+    val referenceForInputFile = fileMetadata.find(m => inputFileName.contains(m.fileName)).map(_.fileReference)
     val metadataFileContent =
-      buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata, parserOutputs, tdrOutputs, checkSumFileContent)
+      buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata, parserOutputs, tdrOutputs, checkSumFileContent, referenceForInputFile)
 
     val toPackDirectory = s"$s3FolderName/out"
     s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$metadataFileName")
@@ -67,8 +69,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
       "parser.log"
     ) ++ images
 
-    val isInputFile: String => Boolean = s => s.startsWith("data/") && s.endsWith("docx")
-    fileNames.filter(n => filesToPack.contains(n) || isInputFile(n)).foreach { fileName =>
+    fileNames.filter(n => filesToPack.contains(n) || inputFileName.contains(n)).foreach { fileName =>
       s3Utils.copyFile(
         fromBucket = s3Bucket,
         toBucket = s3Bucket,

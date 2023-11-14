@@ -200,7 +200,8 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         |      "Contact-Email" : "jane.doe@email.uk",
         |      "Payload-Oxum" : "45956.1",
         |      "Bagging-Date" : "2021-12-16",
-        |      "Document-Checksum-sha256" : "test-checksum"
+        |      "Document-Checksum-sha256" : "test-checksum",
+        |      "File-Reference" : "test-reference"
         |    }
         |  }
         |}""".stripMargin
@@ -215,7 +216,8 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         "images" -> null
       ),
       tdrOutputs = MetadataConstructionUtils.textFileStringToJson(Some(bagInfoContent)),
-      checkSumContent = Some("test-checksum")
+      checkSumContent = Some("test-checksum"),
+      fileReference = Some("test-reference")
     )
     expectedFileContent shouldBe actualFileContent
   }
@@ -238,5 +240,13 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
     val expectedFileName = JsNull
     val actualFileName = MetadataConstructionUtils.getFileNameWithSuffix(".docx")(Seq("parser.log"))
     expectedFileName shouldBe actualFileName
+  }
+
+  "csvStringToFileMetadata" should "return expected file metadata from sample csv string" in {
+    val testString = """file_reference,file_name,file_type,file_size,clientside_original_filepath
+      |test-reference,test file.docx,File,78931,data/test file.docx""".stripMargin
+    MetadataConstructionUtils.csvStringToFileMetadata(Some(testString)) shouldBe Seq(
+      FileMetadata(fileName = "test file.docx", fileReference = "test-reference")
+    )
   }
 }
