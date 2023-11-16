@@ -29,7 +29,8 @@ libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "s3" % awsVersion,
   "software.amazon.awssdk" % "sso" % awsVersion,
   "software.amazon.awssdk" % "ssooidc" % awsVersion,
-  "com.jayway.jsonpath" % "json-path" % "2.6.0"
+  "com.jayway.jsonpath" % "json-path" % "2.6.0",
+  "com.github.tototoshi" %% "scala-csv" % "1.3.10"
 )
 
 val circeVersion = "0.14.2"

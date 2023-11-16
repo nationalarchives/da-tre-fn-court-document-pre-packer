@@ -1,7 +1,9 @@
 package uk.gov.nationalarchives.tre
 
+import com.github.tototoshi.csv.CSVReader
 import play.api.libs.json.{JsArray, JsNull, JsObject, JsString, JsValue, Json}
 
+import java.io.StringReader
 import scala.collection.immutable.ListMap
 
 object MetadataConstructionUtils {
@@ -63,14 +65,14 @@ object MetadataConstructionUtils {
   }.getOrElse(Json.obj())
 
   def csvStringToFileMetadata(str: Option[String]): Seq[FileMetadata] = str.map { s =>
-    s.split("\n").tail.flatMap { line =>
-      val fields = line.split(',')
+    val reader = new StringReader(s)
+    CSVReader.open(reader).allWithHeaders.flatMap { row =>
       for {
-        fileReference <- fields.headOption
-        fileName <- fields.lift(1)
+        fileReference <- row.get("file_reference").filter(_.nonEmpty)
+        fileName <- row.get("file_name")
       } yield FileMetadata(fileName, fileReference)
     }
-  }.toSeq.flatten
+  }.getOrElse(Seq.empty[FileMetadata])
 
   def arrayFromField(fieldName: String): JsObject => JsArray =
     _.value.get(fieldName).collect { case ja: JsArray => ja }.getOrElse(Json.arr())

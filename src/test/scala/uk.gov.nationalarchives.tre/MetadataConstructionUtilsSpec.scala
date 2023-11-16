@@ -244,6 +244,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
 
   "csvStringToFileMetadata" should "return expected file metadata from sample csv string" in {
     val testString = """file_reference,file_name,file_type,file_size,clientside_original_filepath
+      |,file with empty reference.docx,File,12345,data/file with no reference.docx"
       |test-reference,test file.docx,File,78931,data/test file.docx""".stripMargin
     MetadataConstructionUtils.csvStringToFileMetadata(Some(testString)) shouldBe Seq(
       FileMetadata(fileName = "test file.docx", fileReference = "test-reference")
