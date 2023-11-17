@@ -1,7 +1,9 @@
 package uk.gov.nationalarchives.tre
 
+import com.github.tototoshi.csv.CSVReader
 import play.api.libs.json.{JsArray, JsNull, JsObject, JsString, JsValue, Json}
 
+import java.io.StringReader
 import scala.collection.immutable.ListMap
 
 object MetadataConstructionUtils {
@@ -12,7 +14,8 @@ object MetadataConstructionUtils {
     parserMetadata: JsObject,
     parserOutputs: JsObject,
     tdrOutputs: JsObject,
-    checkSumContent: Option[String]
+    checkSumContent: Option[String],
+    fileReference: Option[String] = None
   ): String = {
     val xmlFileName: JsValue = parserOutputs.value.getOrElse("xml", JsNull)
     val logFileName: JsValue = parserOutputs.value.getOrElse("log", JsNull)
@@ -33,8 +36,12 @@ object MetadataConstructionUtils {
         ),
         "PARSER" -> (parserMetadata + ("error-messages" -> errors))
       )
+
+    val additionalTDRData: Seq[(String, JsValue)] =
+      Seq(("Document-Checksum-sha256", checkSumContent.map(JsString).getOrElse(JsNull))) ++
+        fileReference.map(r => ("File-Reference", JsString(r))).toSeq
     val withTdrSection = if (tdrOutputs.keys.nonEmpty)
-      coreParameters + ("TDR" -> (tdrOutputs + ("Document-Checksum-sha256" -> checkSumContent.map(JsString).getOrElse(JsNull))))
+      coreParameters + ("TDR" -> (tdrOutputs ++ JsObject(additionalTDRData)))
     else coreParameters
     Json.prettyPrint(Json.obj("parameters" -> withTdrSection))
   }
@@ -57,6 +64,18 @@ object MetadataConstructionUtils {
     Json.toJson(ListMap(pairs: _*)).as[JsObject]
   }.getOrElse(Json.obj())
 
+  def csvStringToFileMetadata(str: Option[String]): Seq[FileMetadata] = str.map { s =>
+    val reader = new StringReader(s)
+    CSVReader.open(reader).allWithHeaders.flatMap { row =>
+      for {
+        fileReference <- row.get("file_reference").filter(_.nonEmpty)
+        fileName <- row.get("file_name")
+      } yield FileMetadata(fileName, fileReference)
+    }
+  }.getOrElse(Seq.empty[FileMetadata])
+
   def arrayFromField(fieldName: String): JsObject => JsArray =
     _.value.get(fieldName).collect { case ja: JsArray => ja }.getOrElse(Json.arr())
 }
+
+case class FileMetadata(fileName: String, fileReference: String)
