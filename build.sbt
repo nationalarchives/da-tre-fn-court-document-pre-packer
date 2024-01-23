@@ -20,7 +20,7 @@ assemblyMergeStrategy in assembly := {
 }
 
 libraryDependencies ++= Seq(
-  "com.novocode" % "junit-interface" % "0.11" % Test,
+  "com.github.sbt" % "junit-interface" % "0.13.3" % Test,
   "org.scalatest" %% "scalatest" % "3.2.11" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.16.0" % Test,
   "uk.gov.nationalarchives" % "da-transform-schemas" % "2.3",
