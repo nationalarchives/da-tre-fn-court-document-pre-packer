@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "scala-csv" % "1.3.10"
 )
 
-val circeVersion = "0.14.2"
+val circeVersion = "0.14.6"
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
