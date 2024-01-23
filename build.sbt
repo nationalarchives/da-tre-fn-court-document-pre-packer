@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
   "com.novocode" % "junit-interface" % "0.11" % Test,
   "org.scalatest" %% "scalatest" % "3.2.11" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.16.0" % Test,
-  "uk.gov.nationalarchives" % "da-transform-schemas" % "2.3",
+  "uk.gov.nationalarchives" % "da-transform-schemas" % "2.5",
   "com.amazonaws" % "aws-lambda-java-events" % "3.11.1",
   "com.typesafe.play" %% "play-json" % "2.10.0-RC6",
   "software.amazon.awssdk" % "s3" % awsVersion,
