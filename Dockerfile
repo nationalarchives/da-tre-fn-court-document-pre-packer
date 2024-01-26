@@ -1,8 +1,8 @@
-FROM  mozilla/sbt:8u292_1.5.7 as builder
+FROM  sbtscala/scala-sbt:eclipse-temurin-focal-17.0.9_9_1.9.8_3.3.1 as builder
 COPY . /lambda/src/
 WORKDIR /lambda/src/
 RUN sbt assembly
 
-FROM public.ecr.aws/lambda/java:11
+FROM public.ecr.aws/lambda/java:17
 COPY --from=builder /lambda/src/target/function.jar ${LAMBDA_TASK_ROOT}/lib/
 CMD ["uk.gov.nationalarchives.tre.LambdaHandler::handleRequest"]
