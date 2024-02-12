@@ -15,7 +15,7 @@ object MetadataConstructionUtils {
     parserOutputs: JsObject,
     tdrOutputs: JsObject,
     checkSumContent: Option[String],
-    fileReference: Option[String] = None
+    inputFileMetadata: Option[FileMetadata] = None
   ): String = {
     val xmlFileName: JsValue = parserOutputs.value.getOrElse("xml", JsNull)
     val logFileName: JsValue = parserOutputs.value.getOrElse("log", JsNull)
@@ -39,7 +39,7 @@ object MetadataConstructionUtils {
 
     val additionalTDRData: Seq[(String, JsValue)] =
       Seq(("Document-Checksum-sha256", checkSumContent.map(JsString).getOrElse(JsNull))) ++
-        fileReference.map(r => ("File-Reference", JsString(r))).toSeq
+        inputFileMetadata.toSeq.flatMap(fm => Seq(("File-Reference", JsString(fm.fileReference)), ("UUID", JsString(fm.uuid))))
     val withTdrSection = if (tdrOutputs.keys.nonEmpty)
       coreParameters + ("TDR" -> (tdrOutputs ++ JsObject(additionalTDRData)))
     else coreParameters
@@ -70,7 +70,8 @@ object MetadataConstructionUtils {
       for {
         fileReference <- row.get("file_reference").filter(_.nonEmpty)
         fileName <- row.get("file_name")
-      } yield FileMetadata(fileName, fileReference)
+        uuid <- row.get("UUID")
+      } yield FileMetadata(fileName, fileReference, uuid)
     }
   }.getOrElse(Seq.empty[FileMetadata])
 
@@ -78,4 +79,4 @@ object MetadataConstructionUtils {
     _.value.get(fieldName).collect { case ja: JsArray => ja }.getOrElse(Json.arr())
 }
 
-case class FileMetadata(fileName: String, fileReference: String)
+case class FileMetadata(fileName: String, fileReference: String, uuid: String)

@@ -201,7 +201,8 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         |      "Payload-Oxum" : "45956.1",
         |      "Bagging-Date" : "2021-12-16",
         |      "Document-Checksum-sha256" : "test-checksum",
-        |      "File-Reference" : "test-reference"
+        |      "File-Reference" : "test-reference",
+        |      "UUID" : "test-UUID"
         |    }
         |  }
         |}""".stripMargin
@@ -217,7 +218,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
       ),
       tdrOutputs = MetadataConstructionUtils.textFileStringToJson(Some(bagInfoContent)),
       checkSumContent = Some("test-checksum"),
-      fileReference = Some("test-reference")
+      inputFileMetadata = Some(FileMetadata("eat_2022_1.docx","test-reference", "test-UUID"))
     )
     expectedFileContent shouldBe actualFileContent
   }
@@ -243,11 +244,11 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
   }
 
   "csvStringToFileMetadata" should "return expected file metadata from sample csv string" in {
-    val testString = """file_reference,file_name,file_type,file_size,clientside_original_filepath
+    val testString = """file_reference,file_name,file_type,file_size,clientside_original_filepath,UUID
       |,file with empty reference.docx,File,12345,data/file with no reference.docx"
-      |test-reference,test file.docx,File,78931,data/test file.docx""".stripMargin
+      |test-reference,test file.docx,File,78931,data/test file.docx,test-UUID""".stripMargin
     MetadataConstructionUtils.csvStringToFileMetadata(Some(testString)) shouldBe Seq(
-      FileMetadata(fileName = "test file.docx", fileReference = "test-reference")
+      FileMetadata(fileName = "test file.docx", fileReference = "test-reference", uuid = "test-UUID")
     )
   }
 }

@@ -51,9 +51,18 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     val checkSumFileContent = fileContentFromS3("manifest-sha256.txt").flatMap(_.split(" ").headOption)
     val inputFileName = fileNames.find(n => n.startsWith("data/") && n.endsWith("docx"))
     val fileMetadata = csvStringToFileMetadata(fileContentFromS3("file-metadata.csv"))
-    val referenceForInputFile = fileMetadata.find(m => inputFileName.exists(_.endsWith(m.fileName))).map(_.fileReference)
+    val inputFileMetadata = fileMetadata.find(m => inputFileName.exists(_.endsWith(m.fileName)))
     val metadataFileContent =
-      buildMetadataFileContents(reference, fileNames, metadataFileName, parserMetadata, parserOutputs, tdrOutputs, checkSumFileContent, referenceForInputFile)
+      buildMetadataFileContents(
+        reference = reference,
+        fileNames = fileNames,
+        metadataFileName = metadataFileName,
+        parserMetadata = parserMetadata,
+        parserOutputs = parserOutputs,
+        tdrOutputs = tdrOutputs,
+        checkSumContent = checkSumFileContent,
+        inputFileMetadata = inputFileMetadata
+      )
     val toPackDirectory = s"$s3FolderName/out"
     s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$metadataFileName")
     val images = parserOutputs.value.get("images") match {
