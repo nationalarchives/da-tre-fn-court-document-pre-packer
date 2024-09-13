@@ -3,7 +3,7 @@ import Dependencies._
 ThisBuild / scalaVersion := "2.13.14"
 ThisBuild / version := "0.1.0"
 
-val awsVersion = "2.27.20"
+val awsVersion = "2.27.24"
 
 lazy val root = (project in file("."))
   .settings(
@@ -34,7 +34,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic-extras" % "0.14.4"
 )
 
-val circeVersion = "0.14.9"
+val circeVersion = "0.14.10"
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
