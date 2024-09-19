@@ -3,7 +3,7 @@ import Dependencies._
 ThisBuild / scalaVersion := "2.13.14"
 ThisBuild / version := "0.1.0"
 
-val awsVersion = "2.27.24"
+val awsVersion = "2.28.4"
 
 lazy val root = (project in file("."))
   .settings(
@@ -23,8 +23,8 @@ libraryDependencies ++= Seq(
   "com.github.sbt" % "junit-interface" % "0.13.3" % Test,
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.18.0" % Test,
-  "uk.gov.nationalarchives" % "da-transform-schemas" % "2.8",
-  "com.amazonaws" % "aws-lambda-java-events" % "3.13.0",
+  "uk.gov.nationalarchives" % "da-transform-schemas" % "2.11",
+  "com.amazonaws" % "aws-lambda-java-events" % "3.14.0",
   "org.playframework" %% "play-json" % "3.0.4",
   "software.amazon.awssdk" % "s3" % awsVersion,
   "software.amazon.awssdk" % "sso" % awsVersion,
