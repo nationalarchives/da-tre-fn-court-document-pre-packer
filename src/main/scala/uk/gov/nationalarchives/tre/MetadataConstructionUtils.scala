@@ -52,7 +52,7 @@ object MetadataConstructionUtils {
   def asJson(str: Option[String]): JsObject = str.map(s => Json.parse(s).as[JsObject]).getOrElse(Json.obj())
 
   /**
-   * TDR metadata is currently supplied in a text file with colon separated key value pairs on separate lines
+   * TDR metadata is currently supplied in a text file with colon : separated key value pairs on separate lines
    */
   def textFileStringToJson(str: Option[String]): JsObject = str.map { s =>
     val pairs = s.split("\n").collect { l =>
