@@ -26,12 +26,13 @@ libraryDependencies ++= Seq(
   "uk.gov.nationalarchives" % "da-transform-schemas" % "2.14",
   "com.amazonaws" % "aws-lambda-java-events" % "3.15.0",
   "org.playframework" %% "play-json" % "3.0.4",
-  "software.amazon.awssdk" % "s3" % awsVersion,
-  "software.amazon.awssdk" % "sso" % awsVersion,
-  "software.amazon.awssdk" % "ssooidc" % awsVersion,
+  "software.amazon.awssdk" % "s3" % awsVersion exclude("log4j", "log4j"),
+  "software.amazon.awssdk" % "sso" % awsVersion exclude("log4j", "log4j"),
+  "software.amazon.awssdk" % "ssooidc" % awsVersion exclude("log4j", "log4j"),
   "com.jayway.jsonpath" % "json-path" % "2.9.0",
   "com.github.tototoshi" %% "scala-csv" % "2.0.0",
-  "io.circe" %% "circe-generic-extras" % "0.14.4"
+  "io.circe" %% "circe-generic-extras" % "0.14.4",
+  "commons-logging" % "commons-logging" % "1.3.5" exclude("log4j", "log4j")
 )
 
 val circeVersion = "0.14.10"
