@@ -7,10 +7,10 @@ jobs:
   on-pr-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-      - uses: pre-commit/action@v3.0.0
-      - uses: sbt/setup-sbt@v1
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
+      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd
+      - uses: sbt/setup-sbt@26ab4b0fa1c47fa62fc1f6e51823a658fb6c760c
       - name: Run unit tests
         shell: bash
         run: |
