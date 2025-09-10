@@ -1,5 +1,5 @@
 import sbt._
 
 object Dependencies {
-  lazy val lambdaRuntimeInterfaceClient = "com.amazonaws" % "aws-lambda-java-runtime-interface-client" % "2.8.3"
+  lazy val lambdaRuntimeInterfaceClient = "com.amazonaws" % "aws-lambda-java-runtime-interface-client" % "2.8.4"
 }
