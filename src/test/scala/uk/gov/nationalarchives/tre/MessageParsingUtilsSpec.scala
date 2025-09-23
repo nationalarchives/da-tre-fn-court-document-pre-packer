@@ -1,7 +1,5 @@
 package uk.gov.nationalarchives.tre
 
-import io.circe.syntax.EncoderOps
-import org.mockito.Mockito.when
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar

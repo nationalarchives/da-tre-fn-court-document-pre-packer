@@ -1,9 +1,8 @@
 package uk.gov.nationalarchives.tre
 
 import software.amazon.awssdk.core.sync.RequestBody
-import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.{CopyObjectRequest, CopyObjectResponse, DeleteObjectRequest, DeleteObjectResponse, GetObjectRequest, ListObjectsV2Request, ListObjectsV2Response, PutObjectRequest}
+import software.amazon.awssdk.services.s3.model.{CopyObjectRequest, CopyObjectResponse, GetObjectRequest, ListObjectsV2Request, ListObjectsV2Response, PutObjectRequest}
 
 import java.io.{BufferedReader, InputStreamReader}
 import scala.jdk.CollectionConverters._
