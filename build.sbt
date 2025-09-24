@@ -19,12 +19,6 @@ assembly / assemblyMergeStrategy := {
   case _                        => MergeStrategy.first
 }
 
-scalacOptions ++= Seq(
-  "-deprecation",
-  "-feature",
-  "-Xlint:adapted-args,constant,inaccessible,missing-interpolator,nullary-unit,unused,_"
-)
-
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.18.0" % Test,
