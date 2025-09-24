@@ -254,6 +254,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         FCLExportValue("Judgment-Type","judgmentType"),
         FCLExportValue("Judgment-Update","false"),
         FCLExportValue("Judgment-Update-Type","judgmentUpdateType"),
+        FCLExportValue("Judgment-Update-Details", ""),
         FCLExportValue("Judgment-Neutral-Citation",""),
         FCLExportValue("Judgment-No-Neutral-Citation","true"),
         FCLExportValue("Judgment-Reference","judgmentRef"))
