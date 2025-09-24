@@ -32,7 +32,7 @@ object MetadataConstructionUtils {
     parserOutputs: JsObject,
     tdrOutputs: JsObject,
     checkSumContent: Option[String],
-    inputFileMetadata: List[FCLExportValue] = List.empty[FCLExportValue]
+    inputFileMetadata: Seq[FCLExportValue] = List.empty[FCLExportValue]
   ): String = {
     val xmlFileName: JsValue = parserOutputs.value.getOrElse("xml", JsNull)
     val logFileName: JsValue = parserOutputs.value.getOrElse("log", JsNull)

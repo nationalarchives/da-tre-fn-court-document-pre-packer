@@ -60,7 +60,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
         parserOutputs = parserOutputs,
         tdrOutputs = tdrOutputs,
         checkSumContent = checkSumFileContent,
-        inputFileMetadata = fileMetadata.toList
+        inputFileMetadata = fileMetadata
       )
     val toPackDirectory = s"$s3FolderName/out"
     s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$metadataFileName")
