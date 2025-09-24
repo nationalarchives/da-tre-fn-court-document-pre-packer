@@ -22,7 +22,7 @@ object MetadataConstructionUtils {
     judgment_reference
   )
 
-  private val csvHeaderToFCLKeyMappr = ConfigUtils.loadConfiguration.propertyToOutputMapper("fclExport")
+  private val csvHeaderToFCLKeyMapper = ConfigUtils.loadConfiguration.propertyToOutputMapper("fclExport")
 
   def buildMetadataFileContents(
     reference: String,
@@ -97,7 +97,7 @@ object MetadataConstructionUtils {
         }
       }.map { row =>
         metadataCSVFieldsForFCLExport.map { field =>
-          FCLExportValue(csvHeaderToFCLKeyMappr(field), row.getOrElse(field, ""))
+          FCLExportValue(csvHeaderToFCLKeyMapper(field), row.getOrElse(field, ""))
         }
       }
     }.getOrElse(Seq.empty[FCLExportValue])
