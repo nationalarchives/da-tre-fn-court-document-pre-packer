@@ -2,7 +2,7 @@ package uk.gov.nationalarchives.tre
 
 import com.github.tototoshi.csv.CSVReader
 import play.api.libs.json._
-import uk.gov.nationalarchives.tdr.schema.generated.BaseSchema
+import uk.gov.nationalarchives.tdr.schema.generated.BaseSchema._
 import uk.gov.nationalarchives.tdr.schemautils.ConfigUtils
 
 import java.io.StringReader
@@ -11,14 +11,15 @@ import scala.collection.immutable.ListMap
 object MetadataConstructionUtils {
 
   private val metadataCSVFields: Seq[String] = Seq(
-    BaseSchema.file_reference,
-    BaseSchema.UUID,
-    BaseSchema.judgment_type,
-    BaseSchema.judgment_update,
-    BaseSchema.judgment_update_type,
-    BaseSchema.judgment_neutral_citation,
-    BaseSchema.judgment_no_neutral_citation,
-    BaseSchema.judgment_reference
+    file_reference,
+    UUID,
+    judgment_type,
+    judgment_update,
+    judgment_update_type,
+    judgment_update_details,
+    judgment_neutral_citation,
+    judgment_no_neutral_citation,
+    judgment_reference
   )
 
   private val csvHeaderToFCLKeyMappr = ConfigUtils.loadConfiguration.propertyToOutputMapper("fclExport")
@@ -55,12 +56,14 @@ object MetadataConstructionUtils {
 
     val additionalTDRData: Seq[(String, JsValue)] =
       Seq(("Document-Checksum-sha256", checkSumContent.map(JsString).getOrElse(JsNull))) ++
-        inputFileMetadata.map(fm => (fm.key, JsString(fm.value)))
+        inputFileMetadata.map(fm => (fm.key, if(fm.value.isEmpty) JsNull else JsString(fm.value)))
     val withTdrSection = if (tdrOutputs.keys.nonEmpty)
       coreParameters + ("TDR" -> (tdrOutputs ++ JsObject(additionalTDRData)))
     else coreParameters
     Json.prettyPrint(Json.obj("parameters" -> withTdrSection))
   }
+
+
 
   def getFileNameWithSuffix(suffix: String): Seq[String] => JsValue = fileNames =>
     fileNames.flatMap(_.split('/').lastOption).find(_.endsWith(suffix)).map(JsString).getOrElse(JsNull)
