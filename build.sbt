@@ -5,7 +5,7 @@ ThisBuild / version := "0.1.0"
 
 val awsVersion = "2.33.10"
 
-lazy val root = (project in file("."))
+lazy val root = project.in(file("."))
   .settings(
     name := "da-tre-fn-court-document-pre-packer",
     libraryDependencies ++= Seq(
@@ -14,16 +14,16 @@ lazy val root = (project in file("."))
     assembly / assemblyOutputPath := file("target/function.jar")
   )
 
-assemblyMergeStrategy in assembly := {
+assembly / assemblyMergeStrategy := {
   case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
   case _                        => MergeStrategy.first
 }
 
 libraryDependencies ++= Seq(
-  "com.github.sbt" % "junit-interface" % "0.13.3" % Test,
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.18.0" % Test,
   "uk.gov.nationalarchives" % "da-transform-schemas" % "2.14",
+  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.92",
   "com.amazonaws" % "aws-lambda-java-events" % "3.16.1",
   "org.playframework" %% "play-json" % "3.0.5",
   "software.amazon.awssdk" % "s3" % awsVersion,

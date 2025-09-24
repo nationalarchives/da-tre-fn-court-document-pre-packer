@@ -50,8 +50,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
     val tdrOutputs = textFileStringToJson(fileContentFromS3("bag-info.txt"))
     val checkSumFileContent = fileContentFromS3("manifest-sha256.txt").flatMap(_.split(" ").headOption)
     val inputFileName = fileNames.find(n => n.startsWith("data/") && n.endsWith("docx"))
-    val fileMetadata = csvStringToFileMetadata(fileContentFromS3("file-metadata.csv"))
-    val inputFileMetadata = fileMetadata.find(m => inputFileName.exists(_.endsWith(m.fileName)))
+    val fileMetadata: Seq[FCLExportValue] = csvStringToRequiredCSVValues(fileContentFromS3("file-metadata.csv"), inputFileName)
     val metadataFileContent =
       buildMetadataFileContents(
         reference = reference,
@@ -61,7 +60,7 @@ class LambdaHandler extends RequestHandler[SNSEvent, String] {
         parserOutputs = parserOutputs,
         tdrOutputs = tdrOutputs,
         checkSumContent = checkSumFileContent,
-        inputFileMetadata = inputFileMetadata
+        inputFileMetadata = fileMetadata
       )
     val toPackDirectory = s"$s3FolderName/out"
     s3Utils.saveStringToFile(metadataFileContent, s3Bucket, s"$toPackDirectory/$metadataFileName")

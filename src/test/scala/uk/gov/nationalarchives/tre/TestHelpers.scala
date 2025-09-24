@@ -1,13 +1,9 @@
 package uk.gov.nationalarchives.tre
 
-import com.amazonaws.services.lambda.runtime.api.client.logging.LogSink
-import com.amazonaws.services.lambda.runtime.events.{LambdaDestinationEvent, SNSEvent, SQSEvent}
+import com.amazonaws.services.lambda.runtime.events.SNSEvent
 import com.amazonaws.services.lambda.runtime.events.SNSEvent.{SNS, SNSRecord}
-import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage
-import play.api.libs.json.JsString
 
-import java.nio.charset.StandardCharsets
-import scala.jdk.CollectionConverters.{MapHasAsJava, SeqHasAsJava}
+import scala.jdk.CollectionConverters.SeqHasAsJava
 
 object TestHelpers {
   def snsEvent(message: String): SNSEvent = {

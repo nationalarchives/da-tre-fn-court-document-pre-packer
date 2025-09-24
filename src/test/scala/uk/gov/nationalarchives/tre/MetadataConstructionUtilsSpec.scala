@@ -202,7 +202,9 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
         |      "Bagging-Date" : "2021-12-16",
         |      "Document-Checksum-sha256" : "test-checksum",
         |      "File-Reference" : "test-reference",
-        |      "UUID" : "test-UUID"
+        |      "UUID" : "test-UUID",
+        |      "Judgment-Type" : null,
+        |      "Judgment-Update" : "false"
         |    }
         |  }
         |}""".stripMargin
@@ -218,7 +220,7 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
       ),
       tdrOutputs = MetadataConstructionUtils.textFileStringToJson(Some(bagInfoContent)),
       checkSumContent = Some("test-checksum"),
-      inputFileMetadata = Some(FileMetadata("eat_2022_1.docx","test-reference", "test-UUID"))
+      inputFileMetadata =List(FCLExportValue("File-Reference" ,"test-reference"),FCLExportValue("UUID","test-UUID"), FCLExportValue("Judgment-Type",""), FCLExportValue("Judgment-Update","false"))
     )
     expectedFileContent shouldBe actualFileContent
   }
@@ -243,12 +245,20 @@ class MetadataConstructionUtilsSpec extends AnyFlatSpec {
     expectedFileName shouldBe actualFileName
   }
 
-  "csvStringToFileMetadata" should "return expected file metadata from sample csv string" in {
-    val testString = """file_reference,file_name,file_type,file_size,clientside_original_filepath,UUID
-      |,file with empty reference.docx,File,12345,data/file with no reference.docx"
-      |test-reference,test file.docx,File,78931,data/test file.docx,test-UUID""".stripMargin
-    MetadataConstructionUtils.csvStringToFileMetadata(Some(testString)) shouldBe Seq(
-      FileMetadata(fileName = "test file.docx", fileReference = "test-reference", uuid = "test-UUID")
-    )
+  "csvStringToFileMetadata" should "return expected required metadata from sample csv string" in {
+    val testString = """file_reference,file_name,file_type,file_size,clientside_original_filepath,UUID,judgment_update,judgment_reference,judgment_type,judgment_update_type,judgment_neutral_citation,judgment_no_neutral_citation
+                       |,file with empty "reference.docx,"File,12345,data/file with no reference.docx"
+                       |test-reference,test file.docx,File,78931,data/test file.docx,test-UUID,false,judgmentRef,judgmentType,judgmentUpdateType,,true""".stripMargin
+      val expectedValues = List(FCLExportValue("File-Reference","test-reference"),
+        FCLExportValue("UUID","test-UUID"),
+        FCLExportValue("Judgment-Type","judgmentType"),
+        FCLExportValue("Judgment-Update","false"),
+        FCLExportValue("Judgment-Update-Type","judgmentUpdateType"),
+        FCLExportValue("Judgment-Update-Details", ""),
+        FCLExportValue("Judgment-Neutral-Citation",""),
+        FCLExportValue("Judgment-No-Neutral-Citation","true"),
+        FCLExportValue("Judgment-Reference","judgmentRef"))
+
+      MetadataConstructionUtils.csvStringToRequiredCSVValues(Some(testString), Some("test file.docx"))  shouldBe expectedValues
   }
 }
