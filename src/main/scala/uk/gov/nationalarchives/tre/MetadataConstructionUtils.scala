@@ -10,7 +10,7 @@ import scala.collection.immutable.ListMap
 
 object MetadataConstructionUtils {
 
-  private val metadataCSVFields: Seq[String] = Seq(
+  private val metadataCSVFieldsForFCLExport: Seq[String] = Seq(
     file_reference,
     UUID,
     judgment_type,
@@ -96,7 +96,7 @@ object MetadataConstructionUtils {
           inputFileName.exists(_.endsWith(fileName))
         }
       }.map { row =>
-        metadataCSVFields.map { field =>
+        metadataCSVFieldsForFCLExport.map { field =>
           FCLExportValue(csvHeaderToFCLKeyMappr(field), row.getOrElse(field, ""))
         }
       }
@@ -105,4 +105,3 @@ object MetadataConstructionUtils {
 }
 
 case class FCLExportValue(key:String, value: String)
-
