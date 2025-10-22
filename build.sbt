@@ -1,9 +1,9 @@
 import Dependencies._
 
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "2.13.17"
 ThisBuild / version := "0.1.0"
 
-val awsVersion = "2.33.13"
+val awsVersion = "2.35.11"
 
 lazy val root = project.in(file("."))
   .settings(
@@ -23,9 +23,9 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.18.0" % Test,
   "uk.gov.nationalarchives" % "da-transform-schemas" % "2.14",
-  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.92",
+  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.96",
   "com.amazonaws" % "aws-lambda-java-events" % "3.16.1",
-  "org.playframework" %% "play-json" % "3.0.5",
+  "org.playframework" %% "play-json" % "3.0.6",
   "software.amazon.awssdk" % "s3" % awsVersion,
   "software.amazon.awssdk" % "sso" % awsVersion,
   "software.amazon.awssdk" % "ssooidc" % awsVersion,
@@ -34,7 +34,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic-extras" % "0.14.4"
 )
 
-val circeVersion = "0.14.14"
+val circeVersion = "0.14.15"
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
