@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "s3" % awsVersion,
   "software.amazon.awssdk" % "sso" % awsVersion,
   "software.amazon.awssdk" % "ssooidc" % awsVersion,
-  "com.jayway.jsonpath" % "json-path" % "2.9.0",
+  "com.jayway.jsonpath" % "json-path" % "2.10.0",
   "com.github.tototoshi" %% "scala-csv" % "2.0.0",
   "io.circe" %% "circe-generic-extras" % "0.14.4"
 )
