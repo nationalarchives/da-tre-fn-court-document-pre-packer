@@ -1,9 +1,9 @@
 import Dependencies._
 
-ThisBuild / scalaVersion := "2.13.17"
+ThisBuild / scalaVersion := "2.13.18"
 ThisBuild / version := "0.1.0"
 
-val awsVersion = "2.35.11"
+val awsVersion = "2.39.3"
 
 lazy val root = project.in(file("."))
   .settings(
@@ -23,13 +23,13 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.18.0" % Test,
   "uk.gov.nationalarchives" % "da-transform-schemas" % "2.14",
-  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.101",
+  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.102",
   "com.amazonaws" % "aws-lambda-java-events" % "3.16.1",
   "org.playframework" %% "play-json" % "3.0.6",
   "software.amazon.awssdk" % "s3" % awsVersion,
   "software.amazon.awssdk" % "sso" % awsVersion,
   "software.amazon.awssdk" % "ssooidc" % awsVersion,
-  "com.jayway.jsonpath" % "json-path" % "2.9.0",
+  "com.jayway.jsonpath" % "json-path" % "2.10.0",
   "com.github.tototoshi" %% "scala-csv" % "2.0.0",
   "io.circe" %% "circe-generic-extras" % "0.14.4"
 )
