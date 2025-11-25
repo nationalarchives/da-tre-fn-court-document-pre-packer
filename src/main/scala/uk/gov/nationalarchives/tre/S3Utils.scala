@@ -22,14 +22,14 @@ class S3Utils(s3Client: S3Client) {
       token.foreach(builder.continuationToken)
       val resp = s3Client.listObjectsV2(builder.build())
 
-      val pageKeys = resp.contents().asScala.iterator
+      val pageFiles = resp.contents().asScala.iterator
         .map(_.key())
         .map(_.substring(prefix.length))
         .filter(_.nonEmpty)
         .toVector
 
       val nextToken = Option(resp.nextContinuationToken())
-      val updated = acc ++ pageKeys // preserve ordering
+      val updated = acc ++ pageFiles
       if (resp.isTruncated) loop(nextToken, updated) else updated
     }
 
