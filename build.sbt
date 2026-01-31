@@ -3,7 +3,7 @@ import Dependencies._
 ThisBuild / scalaVersion := "2.13.18"
 ThisBuild / version := "0.1.0"
 
-val awsVersion = "2.41.16"
+val awsVersion = "2.41.19"
 
 lazy val root = project.in(file("."))
   .settings(
