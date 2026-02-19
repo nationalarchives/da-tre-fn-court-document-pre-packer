@@ -1,4 +1,4 @@
-FROM  sbtscala/scala-sbt:eclipse-temurin-21.0.6_7_1.10.10_3.6.3 AS builder
+FROM sbtscala/scala-sbt:eclipse-temurin-24.0.1_9_1.12.3_3.8.1 AS builder
 COPY . /lambda/src/
 WORKDIR /lambda/src/
 RUN sbt assembly
