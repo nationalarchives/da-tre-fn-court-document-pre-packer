@@ -3,7 +3,7 @@ import Dependencies._
 ThisBuild / scalaVersion := "2.13.18"
 ThisBuild / version := "0.1.0"
 
-val awsVersion = "2.41.34"
+val awsVersion = "2.43.0"
 
 lazy val root = project.in(file("."))
   .settings(
@@ -20,10 +20,10 @@ assembly / assemblyMergeStrategy := {
 }
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "3.2.19" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.20" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.18.0" % Test,
   "uk.gov.nationalarchives" % "da-transform-schemas" % "2.14",
-  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.120",
+  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.131",
   "com.amazonaws" % "aws-lambda-java-events" % "3.16.1",
   "org.playframework" %% "play-json" % "3.0.6",
   "software.amazon.awssdk" % "s3" % awsVersion,
