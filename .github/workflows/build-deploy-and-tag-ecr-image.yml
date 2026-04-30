@@ -3,6 +3,7 @@ on:
     branches:
       - 'main'
   workflow_dispatch:
+permissions: {}
 jobs:
   ecr-deploy:
     uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy-with-wiz-scan.yml@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # v0.0.82
