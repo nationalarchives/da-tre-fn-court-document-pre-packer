@@ -6,7 +6,7 @@ on:
 permissions: {}
 jobs:
   ecr-deploy:
-    uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy-with-wiz-scan.yml@110559c0bbef60ed4a81ff8f66f22f1bcef67fd6 # v0.0.82
+    uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy-with-wiz-scan.yml@2e31dac8040257c400f3c555b172aa095b3117bb # v0.0.85
 
 
     with:
