@@ -3,7 +3,9 @@ on:
     branches:
       - 'main'
   workflow_dispatch:
-permissions: {}
+permissions:
+  contents: write
+  id-token: write
 jobs:
   ecr-deploy:
     uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy-with-wiz-scan.yml@2e31dac8040257c400f3c555b172aa095b3117bb # v0.0.85
