@@ -8,7 +8,7 @@ permissions:
   id-token: write
 jobs:
   ecr-deploy:
-    uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy-with-wiz-scan.yml@003782eb57eaa02bb766eed9bec67fdc523606ba # v0.0.87
+    uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy-with-wiz-scan.yml@a38a32afdc8163c1ab6683d913ee97e7522dc9e0 # v0.0.88
 
 
     with:
