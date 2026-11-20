@@ -3,7 +3,7 @@ import Dependencies._
 ThisBuild / scalaVersion := "2.13.18"
 ThisBuild / version := "0.1.0"
 
-val awsVersion = "2.56.0"
+val awsVersion = "2.59.4"
 
 lazy val root = project.in(file("."))
   .settings(
@@ -19,11 +19,21 @@ assembly / assemblyMergeStrategy := {
   case _                        => MergeStrategy.first
 }
 
+val jacksonVersion = "2.18.12"
+
+dependencyOverrides ++= Seq(
+  "com.fasterxml.jackson.core" % "jackson-annotations",
+  "com.fasterxml.jackson.core" % "jackson-core",
+  "com.fasterxml.jackson.core" % "jackson-databind",
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8",
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310"
+).map(_ % jacksonVersion)
+
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.20" % Test,
   "org.scalatestplus" %% "mockito-4-11" % "3.2.18.0" % Test,
   "uk.gov.nationalarchives" % "da-transform-schemas" % "2.15",
-  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.151",
+  "uk.gov.nationalarchives" %% "da-metadata-schema" % "0.0.156",
   "com.amazonaws" % "aws-lambda-java-events" % "3.16.1",
   "org.playframework" %% "play-json" % "3.0.6",
   "software.amazon.awssdk" % "s3" % awsVersion,
