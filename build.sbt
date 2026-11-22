@@ -19,7 +19,7 @@ assembly / assemblyMergeStrategy := {
   case _                        => MergeStrategy.first
 }
 
-val jacksonVersion = "2.18.12"
+val jacksonVersion = "2.23.0"
 
 dependencyOverrides ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-annotations",
